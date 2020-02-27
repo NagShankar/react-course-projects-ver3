@@ -103,6 +103,41 @@ class IndecisionApp extends React.Component{
         
         }
     
+    componentDidMount(){
+       
+        
+        //use try catch for any wrong json format
+        
+        try{
+        
+             //console.log("indecision app mounted");
+        const getOptions=localStorage.getItem('allOptions');
+        const options=JSON.parse(getOptions);
+         //console.log(options);
+        //this.setState(()=>({options})); //or options:options - when value and key is same, then we can shorten it
+        
+        //we want to setState only when options are there, we dont want o run it every time even when options are zero,
+        if(options){
+            this.setState(()=>({options}));
+            
+        } 
+            
+        }catch(e){
+            //do nothing
+            
+        }
+    }
+    
+    componentDidUpdate(prevProps,prevState){
+        if(prevState.options.length !== this.state.options.length){
+            const setOptions=JSON.stringify(this.state.options);
+            //console.log(setOptions);
+            localStorage.setItem('allOptions',setOptions);
+            
+        }
+        
+    }
+    
         handleDeleteOptions(){
             //option 1 to simplify setState
 //            this.setState(()=>{
@@ -310,7 +345,7 @@ const Options = (props) => {
               <button onClick={props.resettingOptions} disabled={!props.gotSomethingToWipe}>Wipe All</button>
               <p>Here are your options</p>
               <p>Here is the length: {props.allOptions.length}</p>
-            
+              {props.allOptions.length===0 && <p>Start adding some options to get started</p>}
             <ol>     
                  {
                      props.allOptions.map((option)=>{
@@ -388,9 +423,6 @@ class AddOption extends React.Component{
         
     }
     
-   
-
-
 
     addOption(e){
         //alert('i will add something');
@@ -417,8 +449,10 @@ class AddOption extends React.Component{
         //option 2 to simplify setState, implicity returning object instead of explicit return using return statement
         this.setState(()=>({error:whatsTheOutput}));
         
-        
-         e.target.elements.option.value='';//emptying the input box after submitting
+        if(!whatsTheOutput){
+            e.target.elements.option.value='';//emptying the input box if there is no error like duplicate submit or no values
+        }
+         
     }
     
     render(){

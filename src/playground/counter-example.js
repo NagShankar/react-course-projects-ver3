@@ -86,6 +86,41 @@ class Counter extends React.Component{
         
     }
     
+    componentDidMount(){
+        //console.log("counter mounter");
+        
+        /* const getCounter=localStorage.getItem("counterVal");
+        const getCounterVal=JSON.parse(getCounter);
+        const finalVal=parseInt(getCounterVal)
+        this.setState(()=>({count:finalVal})); */
+        
+         // we're not dealing with too many objects and properties here, so JSON format is not required like above
+        
+        const getCounter=localStorage.getItem("counterVal");
+        const finalVal=parseInt(getCounter,10);//base 10
+        
+        if(!isNaN(finalVal)){ //checking for not a number condition
+            this.setState(()=>({count:finalVal}));
+        } 
+        
+        
+    }
+    
+    componentDidUpdate(prevProps,prevState){
+        //console.log("component Updated");
+        
+        /*
+        const counterValue=JSON.stringify(this.state.count);
+        localStorage.setItem("counterVal",counterValue);
+        */
+        
+       // we're not dealing with too many objects and properties here, so JSON format is not required like above
+       if(prevState.count !== this.state.count){
+             localStorage.setItem("counterVal",this.state.count);
+        }
+        
+    }
+    
     handleAddOne(){
         //console.log('i will add one');
         //console.log(this.state.count=this.state.count+1);
