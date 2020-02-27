@@ -121,6 +121,36 @@ function (_React$Component) {
   }
 
   _createClass(IndecisionApp, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      //use try catch for any wrong json format
+      try {
+        //console.log("indecision app mounted");
+        var getOptions = localStorage.getItem('allOptions');
+        var options = JSON.parse(getOptions); //console.log(options);
+        //this.setState(()=>({options})); //or options:options - when value and key is same, then we can shorten it
+        //we want to setState only when options are there, we dont want o run it every time even when options are zero,
+
+        if (options) {
+          this.setState(function () {
+            return {
+              options: options
+            };
+          });
+        }
+      } catch (e) {//do nothing
+      }
+    }
+  }, {
+    key: "componentDidUpdate",
+    value: function componentDidUpdate(prevProps, prevState) {
+      if (prevState.options.length !== this.state.options.length) {
+        var setOptions = JSON.stringify(this.state.options); //console.log(setOptions);
+
+        localStorage.setItem('allOptions', setOptions);
+      }
+    }
+  }, {
     key: "handleDeleteOptions",
     value: function handleDeleteOptions() {
       //option 1 to simplify setState
@@ -281,7 +311,7 @@ var Options = function Options(props) {
   return React.createElement("div", null, React.createElement("button", {
     onClick: props.resettingOptions,
     disabled: !props.gotSomethingToWipe
-  }, "Wipe All"), React.createElement("p", null, "Here are your options"), React.createElement("p", null, "Here is the length: ", props.allOptions.length), React.createElement("ol", null, props.allOptions.map(function (option) {
+  }, "Wipe All"), React.createElement("p", null, "Here are your options"), React.createElement("p", null, "Here is the length: ", props.allOptions.length), props.allOptions.length === 0 && React.createElement("p", null, "Start adding some options to get started"), React.createElement("ol", null, props.allOptions.map(function (option) {
     return React.createElement(Option, {
       key: option,
       optionText: option,
@@ -385,7 +415,10 @@ function (_React$Component2) {
           error: whatsTheOutput
         };
       });
-      e.target.elements.option.value = ''; //emptying the input box after submitting
+
+      if (!whatsTheOutput) {
+        e.target.elements.option.value = ''; //emptying the input box if there is no error like duplicate submit or no values
+      }
     }
   }, {
     key: "render",
